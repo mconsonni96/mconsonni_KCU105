@@ -1,0 +1,1002 @@
+#LyX 2.3 created this file. For more info see http://www.lyx.org/
+\lyxformat 544
+\begin_document
+\begin_header
+\save_transient_properties true
+\origin unavailable
+\textclass IEEEtran
+\begin_preamble
+% for subfigures/subtables
+\usepackage[caption=false,font=footnotesize]{subfig}
+%\pagenumbering{gobble}
+
+
+\pagenumbering{gobble}
+\end_preamble
+\options journal
+\use_default_options false
+\maintain_unincluded_children false
+\language english
+\language_package none
+\inputencoding auto
+\fontencoding global
+\font_roman "default" "default"
+\font_sans "default" "default"
+\font_typewriter "default" "default"
+\font_math "auto" "auto"
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100 100
+\font_tt_scale 100 100
+\use_microtype false
+\use_dash_ligatures true
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command bibtex
+\index_command default
+\float_placement tbh
+\paperfontsize default
+\spacing single
+\use_hyperref true
+\pdf_title "Plug-and-Play Tunable and High-Performance Time-to-Digital Converter as IP-Core for Xilinx FPGAs"
+\pdf_author "Nicola Lusardi"
+\pdf_bookmarks false
+\pdf_bookmarksnumbered true
+\pdf_bookmarksopen true
+\pdf_bookmarksopenlevel 1
+\pdf_breaklinks false
+\pdf_pdfborder true
+\pdf_colorlinks false
+\pdf_backref false
+\pdf_pdfusetitle false
+\pdf_quoted_options "pdfpagelayout=OneColumn, pdfnewwindow=true, pdfstartview=XYZ, plainpages=false"
+\papersize default
+\use_geometry false
+\use_package amsmath 1
+\use_package amssymb 1
+\use_package cancel 1
+\use_package esint 1
+\use_package mathdots 1
+\use_package mathtools 1
+\use_package mhchem 1
+\use_package stackrel 1
+\use_package stmaryrd 1
+\use_package undertilde 1
+\cite_engine basic
+\cite_engine_type default
+\biblio_style plain
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\justification true
+\use_refstyle 0
+\use_minted 0
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\paragraph_indentation default
+\is_math_indent 0
+\math_numbering_side default
+\quotes_style english
+\dynamic_quotes 0
+\papercolumns 2
+\papersides 1
+\paperpagestyle headings
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Title
+Esperimenti sulle Tabelle di Calibrazione sulla Panther board
+\end_layout
+
+\begin_layout Section
+Introduzione
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+IEEEpubidadjcol
+\end_layout
+
+\end_inset
+
+
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+This must be inserted at the begin of every section in the first page to
+ avoid the overlapping to the copyright notice.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Flex Paragraph Start
+status open
+
+\begin_layout Plain Layout
+\begin_inset Argument 1
+status open
+
+\begin_layout Plain Layout
+I
+\end_layout
+
+\end_inset
+
+n questo report descriverò gli esperimenti che ho svolto sulla Panther board,
+ dotata di Kintex-7 FPGA.
+ In particolare, ciò che ho testato è il comportamento delle tabelle di
+ calibrazione (CT) in base alle diverse scelte del Valid, così da vedere
+ se il comportamento di questo meccanismo è mantenuto correttamente anche
+ su questa nuova board, dopo i test sulla Felix.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+You can use each section of the poster to divide your CR in different Section
+ NB: the overview/scenario/motivations have to been included in Introduction!
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename figure/correzioni iniziali del firmware/PanTher.jpg
+	lyxscale 10
+	width 30text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Panther with Kintex-7.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Problemi iniziali della migrazione su Panther
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+IEEEpubidadjcol
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Il TDC è stato migrato tale e quale com' era sulla Felix, in cui le sue
+ caratteristiche erano: NUM_TAP_TDL = 256; NUMBER_OF_TDL = 4; NUM_TAP_PRE_TDL
+ = 64; MIN_VALID_POSITION = 0; STEP_VALID_POSITION = 8; MAX_VALID_POSITION
+ = 256; BIT_UNCALIBRATED = 10.
+ Quest' ultimo parametro si traduce in un valore massimo di ascissa delle
+ CT di 2^BIT_UNCALIBRATED, cioè in 1024 in questo caso.
+ Grazie a questo, tutta la V-TDL era ben contenuta sull' assse delle ascisse,
+ che deve infatti rappresentare un totale di 256 * 4 = 1024 bins.
+ Inizialmente, tutte le CT stampate apparivano come in Fig.
+ 2.
+ Ciò accadeva indipendentemente dalla scelta di ValidPositionTap.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename figure/correzioni iniziali del firmware/CT errata iniziale.png
+	width 20text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Tabelle di calibrazione errate.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+Nessun tap veniva quindi contato durante la costruzione delle tabelle di
+ calibrazione, come se il segnale AsyncInput si propagasse troppo in fretta,
+ attraversando l' intera TDL e dando quindi zero counts sui vari taps, escluso
+ l' ultimo.
+ Ciò era dovuto ad un sampling troppo lento e ad una TDL troppo corta.
+ Riguardo al problema del sampling, ho dovuto far passare il TDC Clock da
+ un clocking wizard con uscita a 400 MHz, poichè sulla Panther, a differenza
+ della Felix, il TDC Clock non va a questo valore di frequenza, ma a soli
+ 156 MHz.
+ Riguardo al secondo problema, ho dovuto prolungare comunque la TDL poichè
+ dopo aver aumentato il TDC Clock iniziava a vedersi qualcosa sulle CT,
+ ma comunque ben poco.
+ Mettendo NUM_TAP_TDL = 1024 (e cambiando anche STEP_VALID_POSITION = 32;
+ MAX_VALID_POSITION = 1024 per avere un vettore ValidPositionSampledTaps
+ lungo quanto prima) e BIT_UNCALIBRATED a 12 (per farci stare 1024 * 4 =
+ 4096), venivano finalmente stampate CT ragionevoli.
+\end_layout
+
+\begin_layout Standard
+Tuttavia, queste TDL venivano un po' troppo shiftate a destra, anche scegliendo
+ un ValidPositionTap sui primi taps della PRE-TDL lunga 64 (vedi Fig.
+ 3).
+ In questo caso, ValidPositionTap = 0, cioè ho estrapolato dal sottovettore
+ ValidPosition_SampledTaps il tap 0 della PRE-TDL.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename figure/correzioni iniziali del firmware/Valid_0 con PRE da 64 (troppo a destra).png
+	width 20text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Tabelle di calibrazione troppo a destra.
+ PRE-TDL troppo corta.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Questo è dovuto allo stesso problema iniziale: la PRE-TDL è troppo corta
+ e il segnale AsyncInput si propaga troppo in fretta attraverso essa, dando
+ quindi dei conteggi già su dei taps abbastanza in là, nel pieno della TDL
+ vera e propria.
+ Ecco perchè la CT non riusciva ad essere ben confinata sulla sinistra.
+ Allora ho prolungato anche la PRE-TDL a 256 taps, grazie alla quale scegliendo
+ ValidPositionTap = 0 ora la CT appariva tutta correttamente a sinistra
+ (Fig.
+ 4).
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename figure/correzioni iniziali del firmware/Valid_0 con PRE da 256 (CT giusta a sinistra).png
+	width 20text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Tabella di calibrazione correttamente a sinistra.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Misurazioni con diverse scelte del ValidPositionTap
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+IEEEpubidadjcol
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Una volta adattato correttamente il firmware alla nuova board, sono passato
+ alle misurazioni vere e proprie delle differenze temporali dei due canali
+ CH1 e CH2 del TDC.
+ Come segnale in ingresso a ciascun canale è stato usato il generatore di
+ segnale interno al firmware (Start-Stop Generator) e nella SubInterpolationMatr
+ix del decoder ho selezionato tutte e 4 le TDL in parallelo.
+ Nelle seguenti figure (Fig.
+ 5, Fig.
+ 6, Fig.7) ci sono i risultati ottenuti, osservati dall' histogrammer di
+ TDC-Software.
+ In ciascuna di queste figure sono rappresentate, in ordine: tabelle di
+ calibrazione, differenza tra canale1 e canale Sync, differenza tra canale2
+ e canale Sync, differenza tra canale2 e canale1, differenza tra canale1
+ e canale2.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename figure/misure con diversi valid (subint = 15)/Valid_8 (no... ch1 e ch2 appaiono invertiti cronologicamente. Meglio i prossimi valori di Valid, più centrali..)/a) Valid_8 (Tap 0 TDL).png
+	lyxscale 20
+	width 20text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename figure/misure con diversi valid (subint = 15)/Valid_8 (no... ch1 e ch2 appaiono invertiti cronologicamente. Meglio i prossimi valori di Valid, più centrali..)/d) CH1 - SYNC (Valid_8).png
+	lyxscale 10
+	width 25text%
+
+\end_inset
+
+
+\begin_inset Graphics
+	filename figure/misure con diversi valid (subint = 15)/Valid_8 (no... ch1 e ch2 appaiono invertiti cronologicamente. Meglio i prossimi valori di Valid, più centrali..)/e) CH2 - SYNC (Valid_8).png
+	lyxscale 10
+	width 25text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename figure/misure con diversi valid (subint = 15)/Valid_8 (no... ch1 e ch2 appaiono invertiti cronologicamente. Meglio i prossimi valori di Valid, più centrali..)/f) CH2 - CH1 (Valid_8).png
+	lyxscale 10
+	width 25text%
+
+\end_inset
+
+
+\begin_inset Graphics
+	filename figure/misure con diversi valid (subint = 15)/Valid_8 (no... ch1 e ch2 appaiono invertiti cronologicamente. Meglio i prossimi valori di Valid, più centrali..)/g) CH1 - CH2 (Valid_8).png
+	lyxscale 10
+	width 25text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+ValidPositionTap = 8 (Tap 0 della TDL).
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename figure/misure con diversi valid (subint = 15)/Valid_13 (OK!)/b) Valid_13 (Tap 160 TDL) (corretto).png
+	lyxscale 20
+	width 20text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename figure/misure con diversi valid (subint = 15)/Valid_13 (OK!)/e) CH1 - SYNC (Valid_13).png
+	lyxscale 10
+	width 25text%
+
+\end_inset
+
+
+\begin_inset Graphics
+	filename figure/misure con diversi valid (subint = 15)/Valid_13 (OK!)/f) CH2 - SYNC (Valid_13).png
+	lyxscale 10
+	width 25text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename figure/misure con diversi valid (subint = 15)/Valid_13 (OK!)/g) CH2 - CH1 (Valid_13).png
+	lyxscale 10
+	width 25text%
+
+\end_inset
+
+
+\begin_inset Graphics
+	filename figure/misure con diversi valid (subint = 15)/Valid_13 (OK!)/h) CH1 - CH2 (Valid_13).png
+	lyxscale 10
+	width 25text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+ValidPositionTap = 13 (Tap 160 della TDL).
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename figure/misure con diversi valid (subint = 15)/Valid_18 (OK!)/b) Valid_18 (Tap 320 TDL) (corretta).png
+	lyxscale 20
+	width 20text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename figure/misure con diversi valid (subint = 15)/Valid_18 (OK!)/e) CH1 - SYNC (Valid_18).png
+	lyxscale 10
+	width 25text%
+
+\end_inset
+
+
+\begin_inset Graphics
+	filename figure/misure con diversi valid (subint = 15)/Valid_18 (OK!)/f) CH2 - SYNC (Valid_18).png
+	lyxscale 10
+	width 25text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename figure/misure con diversi valid (subint = 15)/Valid_18 (OK!)/g) CH2 - CH1 (Valid_18).png
+	lyxscale 10
+	width 25text%
+
+\end_inset
+
+
+\begin_inset Graphics
+	filename figure/misure con diversi valid (subint = 15)/Valid_18 (OK!)/h) CH1 - CH2 (Valid_18).png
+	lyxscale 10
+	width 25text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+ValidPositionTap = 18 (Tap 320 della TDL).
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Come si può notare, nei casi ValidPositionTap = 13 e ValidPositionTap =
+ 18, ho ottenuto intervalli di tempo ch2 - ch1 (e ch1 - ch2) accurati e
+ coerenti tra loro.
+ Nel caso ValidPositionTap = 8, invece, noto un comportamento diverso: i
+ segnali su ch1 e ch2 sono invertiti cronologicamente rispetto agli altri
+ due casi (lo si vede da ch1-sync e ch2-sync) e la misura (in questo caso
+ devo guardare ch2-ch1 poichè ch2 arriva dopo) non è accurata allo stesso
+ modo, seppur l' errore sia solo dell' ordine di una decina di ps.
+ Quindi, ciò che ho concluso da questi esperimenti è che per avere delle
+ misure accurate, conviene prendere il valid ben centrato sulla TDL, e non
+ troppo all' inizio o troppo alla fine.
+\end_layout
+
+\begin_layout Section
+Valid diverso su un solo canale
+\end_layout
+
+\begin_layout Standard
+Ho fatto anche il seguente test: tenere lo stesso valid su due canali, e
+ metterne uno diverso sull' ultimo restante.
+ In particolare, ho usato ValidPositionTap = 12 sul canale Sync e il canale
+ 1, e ho usato ValidPositionTap = 18 sul canale 2.
+ Ho ottenuto i risultati in Fig.
+ 8 (in ordine: tabelle di calibrazione, ch1-sync, ch2-sync, ch2-ch1):
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename figure/valid diverso su un solo ch. misura inaccurata/valid_12 su sync e ch1, valid_18 solo su ch2./a) Valid_12 (Sync e CH1), Valid_18 (CH2).png
+	lyxscale 20
+	width 20text%
+
+\end_inset
+
+
+\begin_inset Graphics
+	filename figure/valid diverso su un solo ch. misura inaccurata/valid_12 su sync e ch1, valid_18 solo su ch2./d) CH1 - SYNC.png
+	lyxscale 10
+	width 25text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename figure/valid diverso su un solo ch. misura inaccurata/valid_12 su sync e ch1, valid_18 solo su ch2./e) CH2 - SYNC.png
+	lyxscale 10
+	width 25text%
+
+\end_inset
+
+
+\begin_inset Graphics
+	filename figure/valid diverso su un solo ch. misura inaccurata/valid_12 su sync e ch1, valid_18 solo su ch2./f) CH2 - CH1.png
+	lyxscale 10
+	width 25text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+Valid diverso su un solo canale.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Noto dai grafici che la misura è parecchio inaccurata rispetto ai casi precedent
+i.
+ Si scosta infatti dell' ordine di circa 800 ps.
+ Ciò che concludo quindi è che non è buona pratica scegliere diversi Valid
+ sui diversi canali; meglio lavorare con lo stesso.
+\end_layout
+
+\begin_layout Section
+Meccanismo di Sub-Interpolation
+\end_layout
+
+\begin_layout Standard
+L' ultimo esperimento che ho svolto è stato quello di testare il meccanismo
+ di sub-int presente nel decoder.
+ Gli esperimenti descritti nei precedenti paragrafi sono stati tutti svolti
+ coinvolgendo tutte e 4 le TDL in parallelo.
+ Qui invece ho selezionato prima una sola TDL, poi due, poi tre, poi tutte
+ e quattro (nulla di nuovo rispetto a prima in quest' ultimo caso, ma le
+ riporterò di nuovo per completezza).
+ Per ognuno di questi casi ho tenuto il ValidPositionTap 
+\begin_inset Quotes eld
+\end_inset
+
+accurato
+\begin_inset Quotes erd
+\end_inset
+
+ pari a 13 (Tap 160 della TDL vera e propria).
+ Vedi i risultati in Fig.
+ 9,10,11,12 (in ordine: tabelle di calibrazione, ch1-ch2):
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename figure/diverse subint e dev standard che migliora/Valid_13 (subint = 1)/a) Valid_13 (Tap 160 TDL).png
+	lyxscale 20
+	width 20text%
+
+\end_inset
+
+
+\begin_inset Graphics
+	filename figure/diverse subint e dev standard che migliora/Valid_13 (subint = 1)/g) CH1 - CH2 (Valid_13).png
+	lyxscale 10
+	width 25text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+SubInt = 0001 (solo la prima TDL).
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename figure/diverse subint e dev standard che migliora/Valid_13 (subint = 3)/a) Valid_13 (Tap 160 TDL).png
+	lyxscale 20
+	width 20text%
+
+\end_inset
+
+
+\begin_inset Graphics
+	filename figure/diverse subint e dev standard che migliora/Valid_13 (subint = 3)/g) CH1 - CH2 (Valid_13).png
+	lyxscale 10
+	width 25text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+SubInt = 0011 (prima e seconda TDL in parallelo.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename figure/diverse subint e dev standard che migliora/Valid_13 (subint = 7)/b) Valid_13 (Tap 160 TDL) (corretto).png
+	lyxscale 20
+	width 20text%
+
+\end_inset
+
+
+\begin_inset Graphics
+	filename figure/diverse subint e dev standard che migliora/Valid_13 (subint = 7)/h) CH1 - CH2 (Valid_13).png
+	lyxscale 10
+	width 25text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+SubInt = 0111 (prima, seconda e terza TDL in parallelo).
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename figure/diverse subint e dev standard che migliora/Valid_13 (subint = 15)/b) Valid_13 (Tap 160 TDL) (corretto).png
+	lyxscale 20
+	width 20text%
+
+\end_inset
+
+
+\begin_inset Graphics
+	filename figure/diverse subint e dev standard che migliora/Valid_13 (subint = 15)/h) CH1 - CH2 (Valid_13).png
+	lyxscale 10
+	width 25text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+SubInt = 1111 (tutte e quattro le TDL in parallelo).
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Guardiamo innanzitutto alle tabelle di calibrazione.
+ Come si può notare, nel primo caso ho una CT che occupa 1/4 dello spazio
+ rispetto al caso finale; nel secondo caso la CT occupa 1/2; nel terzo caso
+ occupa 3/4.
+ Questo perchè nel decoder c'è un Tree Adder che somma i codici termometrici
+ che arrivano dalle varie TDL.
+ Nel caso SubInt = 0001, la TDL è una sola e il Tree Adder non ha nulla
+ da sommare; nel caso con 2,3,4 TDL invece, il Tree Adder deve sommare rispettiv
+amente 2,3,4 codici termometrici in arrivo dalle TDL.
+ Per cui, al Calibratore arrivano dei counting su dei bins che vanno ben
+ oltre il massimo di 1024 della singola TDL.
+ Ecco perchè abbiamo Tabelle di Calibrazione sempre più larghe: molti più
+ bins vengono coinvolti nella sua costruzione.
+ Ciò inoltre porta ad abbassare sempre di più il peso dell' ultra-bin, che
+ nel primo caso è parecchio alto e pari a circa 60 ps, e sub-interpolando
+ si abbassa sempre di più, fino ad arrivare al caso migliore (SubInt = 1111)
+ in cui è soltanto circa 10 ps.
+ 
+\end_layout
+
+\begin_layout Standard
+Risolvere il problema dell' ultra-bin ci porta a una risoluzione migliore
+ e a misure con meno incertezza, come possiamo vedere dalla sempre minore
+ deviazione standard degli istogrammi nei vari casi.
+\end_layout
+
+\begin_layout Standard
+Concludo quindi che la pratica migliore è coinvolgere tutte e quattro le
+ TDL, per ottenere la risoluzione migliore grazie all' abbassamento dell'
+ ultra-bin, e quindi a misure più precise.
+\end_layout
+
+\end_body
+\end_document

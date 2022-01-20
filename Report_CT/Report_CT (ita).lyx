@@ -1,0 +1,861 @@
+#LyX 2.3 created this file. For more info see http://www.lyx.org/
+\lyxformat 544
+\begin_document
+\begin_header
+\save_transient_properties true
+\origin unavailable
+\textclass IEEEtran
+\begin_preamble
+% for subfigures/subtables
+\usepackage[caption=false,font=footnotesize]{subfig}
+%\pagenumbering{gobble}
+
+
+\pagenumbering{gobble}
+\end_preamble
+\options journal
+\use_default_options false
+\maintain_unincluded_children false
+\language english
+\language_package none
+\inputencoding auto
+\fontencoding global
+\font_roman "default" "default"
+\font_sans "default" "default"
+\font_typewriter "default" "default"
+\font_math "auto" "auto"
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100 100
+\font_tt_scale 100 100
+\use_microtype false
+\use_dash_ligatures true
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command bibtex
+\index_command default
+\float_placement tbh
+\paperfontsize default
+\spacing single
+\use_hyperref true
+\pdf_title "Plug-and-Play Tunable and High-Performance Time-to-Digital Converter as IP-Core for Xilinx FPGAs"
+\pdf_author "Nicola Lusardi"
+\pdf_bookmarks false
+\pdf_bookmarksnumbered true
+\pdf_bookmarksopen true
+\pdf_bookmarksopenlevel 1
+\pdf_breaklinks false
+\pdf_pdfborder true
+\pdf_colorlinks false
+\pdf_backref false
+\pdf_pdfusetitle false
+\pdf_quoted_options "pdfpagelayout=OneColumn, pdfnewwindow=true, pdfstartview=XYZ, plainpages=false"
+\papersize default
+\use_geometry false
+\use_package amsmath 1
+\use_package amssymb 1
+\use_package cancel 1
+\use_package esint 1
+\use_package mathdots 1
+\use_package mathtools 1
+\use_package mhchem 1
+\use_package stackrel 1
+\use_package stmaryrd 1
+\use_package undertilde 1
+\cite_engine basic
+\cite_engine_type default
+\biblio_style plain
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\justification true
+\use_refstyle 0
+\use_minted 0
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\paragraph_indentation default
+\is_math_indent 0
+\math_numbering_side default
+\quotes_style english
+\dynamic_quotes 0
+\papercolumns 2
+\papersides 1
+\paperpagestyle headings
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Title
+Esperimenti sulle Tabelle di Calibrazione sulla KCU105 Evaluation Board
+\end_layout
+
+\begin_layout Section
+Introduzione
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+IEEEpubidadjcol
+\end_layout
+
+\end_inset
+
+
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+This must be inserted at the begin of every section in the first page to
+ avoid the overlapping to the copyright notice.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Flex Paragraph Start
+status open
+
+\begin_layout Plain Layout
+\begin_inset Argument 1
+status open
+
+\begin_layout Plain Layout
+I
+\end_layout
+
+\end_inset
+
+n questo report descriverò gli esperimenti che ho svolto sulla KCU105 Evaluation
+ board, dotata di Kintex-UltraScale FPGA.
+ In particolare, ciò che ho testato è il comportamento delle tabelle di
+ calibrazione (CT) in base alle diverse scelte del Valid, così da vedere
+ se il comportamento di questo meccanismo è mantenuto correttamente anche
+ su questa nuova board, dopo i test su Felix e Panther.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+You can use each section of the poster to divide your CR in different Section
+ NB: the overview/scenario/motivations have to been included in Introduction!
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename figure/KCU105.jpeg
+	lyxscale 10
+	width 30text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+KCU105 board with Kintex-UltraScale.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Struttura della TDL post-migrazione su KCU105
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+IEEEpubidadjcol
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Per avere tabelle di calibrazione corrette, ho usato come lunghezza della
+ TDL 1024 taps e come lunghezza della PRE-TDL 128 taps.
+ I segnali sull' UltraScale viaggiano ancora più veloci rispetto a X7S,
+ per cui come TDC Clock di campionamento della TDL mi sono spinto più su
+ in frequenza, portandolo a 500 MHz.
+\end_layout
+
+\begin_layout Section
+Misurazioni con diverse scelte del ValidPositionTap
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+IEEEpubidadjcol
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Una volta adattato correttamente il firmware alla nuova board, sono passato
+ alle misurazioni vere e proprie delle differenze temporali dei due canali
+ CH1 e CH2 del TDC.
+ Come segnale in ingresso a ciascun canale è stato usato il generatore di
+ segnale interno al firmware (Start-Stop Generator), per la precisione il
+ ring oscillator interno in modo da non usare Sys Clock, così da non avere
+ correlazione tra TDC Clock e Sys Clock, dato che su questa board sono creati
+ con lo stesso PLL (clocking wizard) a partire dallo stesso e unico pin
+ di clock.
+ Nella SubInterpolationMatrix del decoder ho selezionato tutte e 4 le TDL
+ in parallelo.
+ Come parametri per la scelta del Valid ho impostato: MIN_VALID_POSITION
+ = -128, MAX_VALID_POSITION = 1023, STEP_VALID_POSITION = 32; quindi, il
+ sottovettore ValidPosition_SampledTaps da cui posso estrarre il valid è
+ lungo 36.
+ Nelle seguenti figure (Fig.
+ 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:ValidPositionTap-=-0"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+, Fig.
+ 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:ValidPositionTap-=-16"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+, Fig.
+ 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:ValidPositionTap-=-32"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+) ci sono i risultati ottenuti, osservati dall' histogrammer plottato tramite
+ pyLibTDC.
+ In ciascuna di queste figure sono rappresentate, in ordine: tabelle di
+ calibrazione, differenza tra canale2 e canale1 (istogramma-gaussiana),
+ risultato numerico di valor medio e deviazione standard della gaussiana.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename figure/misure con diversi valid (subint = 15)/Valid_0/a) Valid_0 (Tap 0 PRE).png
+	width 40col%
+
+\end_inset
+
+
+\begin_inset Graphics
+	filename figure/misure con diversi valid (subint = 15)/Valid_0/c) Hist (Valid_0).png
+	width 60col%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename figure/misure con diversi valid (subint = 15)/Valid_0/b) Mean e Std (Valid_0).png
+	width 100col%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+ValidPositionTap = 0 (Tap 0 della PRE-TDL).
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:ValidPositionTap-=-0"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename figure/misure con diversi valid (subint = 15)/Valid_16/a) Valid_16 (Tap 256 TDL).png
+	width 40col%
+
+\end_inset
+
+
+\begin_inset Graphics
+	filename figure/misure con diversi valid (subint = 15)/Valid_16/c) Hist (Valid_16).png
+	width 60col%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename figure/misure con diversi valid (subint = 15)/Valid_16/b) Mean e Std (Valid_16).png
+	width 100col%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+ValidPositionTap = 16 (Tap 256 della TDL).
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:ValidPositionTap-=-16"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename figure/misure con diversi valid (subint = 15)/Valid_32/a) Valid_32 (Tap 768 TDL).png
+	width 40col%
+
+\end_inset
+
+
+\begin_inset Graphics
+	filename figure/misure con diversi valid (subint = 15)/Valid_32/c) Hist (Valid_32).png
+	width 60col%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename figure/misure con diversi valid (subint = 15)/Valid_32/b) Mean e Std (Valid_32).png
+	width 100col%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+ValidPositionTap = 32 (Tap 768 della TDL).
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:ValidPositionTap-=-32"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Come si può notare, nei primi due casi ho ottenuto intervalli di tempo ch2
+ - ch1 molto accurati.
+ Scegliendo invece ad esempio ValidPositionTap = 32 (tap 768 della TDL)
+ ottengo misure del tutto sballate.
+ Questo perchè la tabella di calibrazione è creata troppo tardi (è troppo
+ a destra) e perdo quasi tutti i samples che servono per la misura, che
+ infatti vedo essere del tutto errata guardando l' istogramma e la deviazione
+ standard peggiorata di più di un ordine di grandezza.
+\end_layout
+
+\begin_layout Section
+Meccanismo di Sub-Interpolation
+\end_layout
+
+\begin_layout Standard
+L' ultimo esperimento che ho svolto è stato quello di testare il meccanismo
+ di sub-int presente nel decoder.
+ Gli esperimenti descritti nel precedente paragrafo sono stati tutti svolti
+ coinvolgendo tutte e 4 le TDL in parallelo.
+ Qui invece ho selezionato prima una sola TDL, poi due, poi tre, poi tutte
+ e quattro (nulla di nuovo rispetto a prima in quest' ultimo caso, ma le
+ riporterò di nuovo per completezza).
+ Per ognuno di questi casi ho tenuto un ValidPositionTap 
+\begin_inset Quotes eld
+\end_inset
+
+accurato
+\begin_inset Quotes erd
+\end_inset
+
+ pari a 16 (Tap 256 della TDL vera e propria).
+ Vedi i risultati in Fig.
+ 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:SubInt-=-0001"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+, 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:SubInt-=-0011"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+, 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:SubInt-=-0111"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+, 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:SubInt-=-1111"
+plural "false"
+caps "false"
+noprefix "false"
+
+\end_inset
+
+ (in ordine: tabelle di calibrazione, ch2-ch1, mean e std dev):
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename figure/diverse subint e dev standard che migliora/Valid_16 (SubInt = 1)/a) Valid_16 (Tap 256 TDL).png
+	width 40col%
+
+\end_inset
+
+
+\begin_inset Graphics
+	filename figure/diverse subint e dev standard che migliora/Valid_16 (SubInt = 1)/c) Hist (Valid_16).png
+	width 60col%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename figure/diverse subint e dev standard che migliora/Valid_16 (SubInt = 1)/b) Mean e Std (Valid_16).png
+	width 100col%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+SubInt = 0001 (solo la prima TDL).
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:SubInt-=-0001"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename figure/diverse subint e dev standard che migliora/Valid_16 (SubInt = 3)/a) Valid_16 (Tap 256 TDL).png
+	width 40col%
+
+\end_inset
+
+
+\begin_inset Graphics
+	filename figure/diverse subint e dev standard che migliora/Valid_16 (SubInt = 3)/c) Hist (Valid_16).png
+	width 60col%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename figure/diverse subint e dev standard che migliora/Valid_16 (SubInt = 3)/b) Mean e Std (Valid_16).png
+	width 100col%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+SubInt = 0011 (prima e seconda TDL in parallelo).
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:SubInt-=-0011"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename figure/diverse subint e dev standard che migliora/Valid_16 (SubInt = 7)/a) Valid_16 (Tap 256 TDL).png
+	width 40col%
+
+\end_inset
+
+
+\begin_inset Graphics
+	filename figure/diverse subint e dev standard che migliora/Valid_16 (SubInt = 7)/c) Hist (Valid_16).png
+	width 60col%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename figure/diverse subint e dev standard che migliora/Valid_16 (SubInt = 7)/b) Mean e Std (Valid_16).png
+	width 100col%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+SubInt = 0111 (prima, seconda e terza TDL in parallelo).
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:SubInt-=-0111"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename figure/diverse subint e dev standard che migliora/Valid_16 (SubInt = 15)/a) Valid_16 (Tap 256 TDL).png
+	width 40col%
+
+\end_inset
+
+
+\begin_inset Graphics
+	filename figure/diverse subint e dev standard che migliora/Valid_16 (SubInt = 15)/c) Hist (Valid_16).png
+	width 60col%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename figure/diverse subint e dev standard che migliora/Valid_16 (SubInt = 15)/b) Mean e Std (Valid_16).png
+	width 100col%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption Standard
+
+\begin_layout Plain Layout
+SubInt = 1111 (tutte e quattro le TDL in parallelo).
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:SubInt-=-1111"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Guardiamo innanzitutto le tabelle di calibrazione.
+ Come si può notare, nel primo caso ho una CT che occupa 1/4 dello spazio
+ rispetto al caso finale; nel secondo caso la CT occupa 1/2; nel terzo caso
+ occupa 3/4.
+ Questo perchè nel decoder c'è un Tree Adder che somma i codici termometrici
+ che arrivano dalle varie TDL.
+ Nel caso SubInt = 0001, la TDL è una sola e il Tree Adder non ha nulla
+ da sommare; nel caso con 2,3,4 TDL invece, il Tree Adder deve sommare rispettiv
+amente 2,3,4 codici termometrici in arrivo dalle TDL.
+ Per cui, al Calibratore arrivano dei counting su dei bins che vanno ben
+ oltre il massimo di 1024 della singola TDL.
+ Ecco perchè abbiamo Tabelle di Calibrazione sempre più larghe: molti più
+ bins vengono coinvolti nella sua costruzione.
+ Ciò inoltre porta ad abbassare sempre di più il peso dell' ultra-bin, che
+ nel primo caso è parecchio alto e pari a circa 35 ps, e sub-interpolando
+ si abbassa sempre di più, fino ad arrivare al caso migliore (SubInt = 1111)
+ in cui è soltanto circa 10 ps.
+ 
+\end_layout
+
+\begin_layout Standard
+Risolvere il problema dell' ultra-bin ci porta a una risoluzione migliore
+ e a misure con meno incertezza, come possiamo vedere dalla sempre minore
+ deviazione standard degli istogrammi nei vari casi.
+\end_layout
+
+\begin_layout Standard
+Concludo quindi che la pratica migliore è coinvolgere tutte e quattro le
+ TDL, per ottenere la risoluzione migliore grazie all' abbassamento dell'
+ ultra-bin, e quindi a misure più precise.
+\end_layout
+
+\end_body
+\end_document
